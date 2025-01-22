@@ -1,0 +1,32 @@
+{
+  "name": "jsdomain-parser",
+  "version": "1.0.6",
+  "description": "Parse URLs to extract TLDs, domain, protocols and more",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup -c"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ToolsOverflow/jsdomain-parser"
+  },
+  "keywords": [
+    "url",
+    "parser",
+    "domain",
+    "parser",
+    "tld",
+    "extractor",
+    "extract",
+    "tld"
+  ],
+  "author": "ToolsOverflow",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-json": "^6.1.0",
+    "rollup": "^2.79.2",
+    "rollup-plugin-commonjs": "^10.1.0",
+    "rollup-plugin-node-resolve": "^5.2.0",
+    "rollup-plugin-terser": "^7.0.2"
+  }
+}

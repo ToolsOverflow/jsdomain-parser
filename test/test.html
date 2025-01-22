@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Suite</title>
+
+    <style>
+      #result {
+        white-space: pre-wrap;
+        font-size: 26px;
+        background-color: lightgray;
+        padding: 25px;
+        margin-top: 25px;
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <input type="text" placeholder="Enter URL" />
+    <button id="parse">Parse</button>
+    <div id="result"></div>
+    <script type="module">
+      import { parse } from "../dist/jsdomain-parser.esm.js";
+
+      document.querySelector("#parse").addEventListener("click", () => {
+        const input = document.querySelector("input").value;
+
+        let parsed;
+
+        try {
+          parsed = parse(input, {
+            allowPrivate: true, // allow private TLDs
+            allowUnknown: false, // restrict to known TLDs only
+            extendedTlds: ["my.tld", "tld"], // add custom TLDs to extend the list
+          });
+        } catch (e) {
+          parsed = {
+            error: e.message,
+          };
+        }
+
+        document.querySelector("#result").innerHTML = JSON.stringify(
+          parsed,
+          null,
+          2
+        );
+      });
+    </script>
+  </body>
+</html>
