@@ -1,6 +1,7 @@
+const parseUrl = require("./parseUrl");
 const tlds = require("./tlds.json");
 
-const parseTld = (hostname, options = {}) => {
+const parseTld = (url, options = {}) => {
   const {
     allowUnknown = false,
     allowPrivate = true,
@@ -10,6 +11,12 @@ const parseTld = (hostname, options = {}) => {
   if (!Array.isArray(extendedTlds)) {
     throw new Error("customTlds must be an array");
   }
+
+  const { hostname } = parseUrl(url);
+
+  // handle localhost as a special case
+  if (hostname == "localhost" && allowPrivate)
+    return { name: "localhost", length: 1, parts: ["localhost"] };
 
   const parts = hostname.split(".");
 
@@ -40,7 +47,10 @@ const parseTld = (hostname, options = {}) => {
     }
   }
 
-  if (detected.length == 0) {
+  // handle case where hostname is an IP address
+  const isIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname);
+
+  if (detected.length == 0 && !isIP) {
     throw new Error(
       "Could not detect TLD. You can set allowUnknown to true for allowing unknown TLDs."
     );

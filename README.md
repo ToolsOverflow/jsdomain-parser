@@ -8,6 +8,7 @@ JS Domain Parser is a lightweight JavaScript library designed to parse and extra
 - Detects TLDs using a comprehensive list of ICANN and private TLDs.
 - Supports custom TLDs via configuration.
 - Allows toggling support for private and unknown TLDs.
+- Supports all protocols (e.g., `http`, `https`, `ssh`, `ftp`, `telnet`, etc.).
 
 ## Installation
 

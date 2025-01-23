@@ -1,6 +1,22 @@
 var DomainParser = (function (exports) {
   'use strict';
 
+  const parseUrl = (url) => {
+    if (!url) throw new Error("Invalid domain name");
+
+    const haveProtocol = /^[a-zA-Z][a-zA-Z\d+\-.]*:\/\//.test(url);
+    if (!haveProtocol) url = `http://${url}`;
+    const urlObject = new URL(url);
+
+    // check for hostname validity
+    if (urlObject.hostname.split(".").findIndex((it) => it.trim() == "") >= 0)
+      throw new Error("Invalid domain name");
+
+    return urlObject;
+  };
+
+  var parseUrl_1 = parseUrl;
+
   var icann = {
   	ac: 1,
   	"com.ac": 2,
@@ -9780,6 +9796,7 @@ var DomainParser = (function (exports) {
   	"meinforum.net": 2,
   	"affinitylottery.org.uk": 3,
   	"raffleentry.org.uk": 3,
+  	localhost: 1,
   	"weeklylottery.org.uk": 3
   }
   };
@@ -9796,7 +9813,7 @@ var DomainParser = (function (exports) {
 
   var tlds = getCjsExportFromNamespace(tlds$2);
 
-  const parseTld = (hostname, options = {}) => {
+  const parseTld = (url, options = {}) => {
     const {
       allowUnknown = false,
       allowPrivate = true,
@@ -9806,6 +9823,12 @@ var DomainParser = (function (exports) {
     if (!Array.isArray(extendedTlds)) {
       throw new Error("customTlds must be an array");
     }
+
+    const { hostname } = parseUrl_1(url);
+
+    // handle localhost as a special case
+    if (hostname == "localhost" && allowPrivate)
+      return { name: "localhost", length: 1, parts: ["localhost"] };
 
     const parts = hostname.split(".");
 
@@ -9836,7 +9859,9 @@ var DomainParser = (function (exports) {
       }
     }
 
-    if (detected.length == 0) {
+    const isIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname);
+
+    if (detected.length == 0 && !isIP) {
       throw new Error(
         "Could not detect TLD. You can set allowUnknown to true for allowing unknown TLDs."
       );
@@ -9853,17 +9878,29 @@ var DomainParser = (function (exports) {
 
   function parse(url, options = {}) {
     try {
-      if (!url.startsWith("http")) url = `http://${url}`;
-      const urlObject = new URL(url);
+      const urlObject = parseUrl_1(url);
 
-      const tldData = parseTld_1(urlObject.hostname, options);
+      if (
+        urlObject.hostname.split(".").filter((i) => i.trim()).length <= 1 &&
+        urlObject.hostname !== "localhost"
+      ) {
+        throw new Error(
+          `Invalid domain name: "${urlObject.hostname}" is not a valid domain.`
+        );
+      }
+
+      const tldData = parseTld_1(url, options);
 
       let domain = urlObject.hostname;
       const hostnameParts = urlObject.hostname.split(".");
       for (let i = hostnameParts.length - 1; i >= 0; i--) {
         const extended = hostnameParts.slice(i);
+
         if (extended.join(".") === tldData.name) {
-          domain = hostnameParts[i - 1] + "." + extended.join(".");
+          if (hostnameParts[i - 1]) {
+            domain = hostnameParts[i - 1] + "." + extended.join(".");
+          }
+
           break;
         }
       }
@@ -9873,29 +9910,36 @@ var DomainParser = (function (exports) {
         query[key] = value;
       }
 
+      let urlData = {
+        domain: domain,
+        origin: urlObject.origin,
+        protocol: urlObject.protocol,
+        host: urlObject.host,
+        hostname: urlObject.hostname,
+        port: urlObject.port,
+        pathname: urlObject.pathname,
+        search: urlObject.search,
+        hash: urlObject.hash,
+        query,
+      };
+
+      // handle for protocols that aren't supported by URL constructor
+      if (urlObject.origin === "null") {
+        urlData.origin = urlObject.protocol + "//" + urlObject.hostname;
+      }
+
       return {
         tld: tldData,
-        url: {
-          domain: domain,
-          origin: urlObject.origin,
-          protocol: urlObject.protocol,
-          host: urlObject.host,
-          hostname: urlObject.hostname,
-          port: urlObject.port,
-          pathname: urlObject.pathname,
-          search: urlObject.search,
-          hash: urlObject.hash,
-          query,
-        },
+        url: urlData,
       };
     } catch (e) {
       throw new Error(`Invalid URL: ${e}`);
     }
   }
 
-  console.log(parse("google.co.in"));
+  var parse_1 = parse;
 
-  var jsdomainParser = { parse, parseTld: parseTld_1 };
+  var jsdomainParser = { parse: parse_1, parseTld: parseTld_1 };
   var jsdomainParser_1 = jsdomainParser.parse;
   var jsdomainParser_2 = jsdomainParser.parseTld;
 
