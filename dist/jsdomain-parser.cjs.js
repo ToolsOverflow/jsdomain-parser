@@ -9860,6 +9860,7 @@ const parseTld = (url, options = {}) => {
     }
   }
 
+  // handle case where hostname is an IP address
   const isIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname);
 
   if (detected.length == 0 && !isIP) {
@@ -9934,7 +9935,7 @@ function parse(url, options = {}) {
       url: urlData,
     };
   } catch (e) {
-    throw new Error(`Invalid URL: ${e}`);
+    throw new Error(`Invalid URL: ${e.message}`);
   }
 }
 

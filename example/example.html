@@ -15,21 +15,21 @@
         font-family: monospace;
       }
     </style>
+
+    <script src="../dist//jsdomain-parser.umd.min.js"></script>
   </head>
   <body>
     <input type="text" placeholder="Enter URL" />
     <button id="parse">Parse</button>
     <div id="result"></div>
     <script type="module">
-      import { parse } from "../dist/jsdomain-parser.esm.js";
-
       document.querySelector("#parse").addEventListener("click", () => {
         const input = document.querySelector("input").value;
 
         let parsed;
 
         try {
-          parsed = parse(input, {
+          parsed = jsDomainParser.parse(input, {
             allowPrivate: true, // allow private TLDs
             allowUnknown: false, // restrict to known TLDs only
             extendedTlds: ["my.tld", "tld"], // add custom TLDs to extend the list

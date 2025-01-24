@@ -16,11 +16,15 @@ JS Domain Parser is a lightweight JavaScript library designed to parse and extra
 npm install jsdomain-parser
 ```
 
-Or include it directly in your project:
+---
+
+or you can include `jsdomain-parser` directly in your project by adding the following `<script>` tag to your HTML file:
 
 ```html
-<script src="./dist/jsdomain-parser.min.js"></script>
+<script src="./dist/jsdomain-parser.umd.min.js"></script>
 ```
+
+This will expose the `jsDomainParser` global object in the browser.
 
 ## Usage
 

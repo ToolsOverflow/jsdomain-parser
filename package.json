@@ -1,6 +1,6 @@
 {
   "name": "jsdomain-parser",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Parse URLs to extract TLDs, domain, protocols and more",
   "main": "index.js",
   "scripts": {

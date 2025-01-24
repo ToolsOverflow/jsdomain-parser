@@ -1,5 +1,8 @@
-var DomainParser = (function (exports) {
-  'use strict';
+(function (global, factory) {
+  typeof exports === 'object' && typeof module !== 'undefined' ? factory(exports) :
+  typeof define === 'function' && define.amd ? define(['exports'], factory) :
+  (global = typeof globalThis !== 'undefined' ? globalThis : global || self, factory(global.jsDomainParser = {}));
+})(this, (function (exports) { 'use strict';
 
   const parseUrl = (url) => {
     if (!url) throw new Error("Invalid domain name");
@@ -9859,6 +9862,7 @@ var DomainParser = (function (exports) {
       }
     }
 
+    // handle case where hostname is an IP address
     const isIP = /^\d{1,3}(\.\d{1,3}){3}$/.test(hostname);
 
     if (detected.length == 0 && !isIP) {
@@ -9933,7 +9937,7 @@ var DomainParser = (function (exports) {
         url: urlData,
       };
     } catch (e) {
-      throw new Error(`Invalid URL: ${e}`);
+      throw new Error(`Invalid URL: ${e.message}`);
     }
   }
 
@@ -9949,6 +9953,4 @@ var DomainParser = (function (exports) {
 
   Object.defineProperty(exports, '__esModule', { value: true });
 
-  return exports;
-
-})({});
+}));
